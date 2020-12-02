@@ -5,18 +5,25 @@ import yaml
 
 def main():
     # games = r'C:\Users\Steven\Documents\Projects\chess-analysis-master\game.pgn'
-    games = r'E:\pgns\lichess_db_standard_rated_2020-10.pgn'
+    # games = r'E:\pgns\lichess_db_standard_rated_2020-10.pgn'
     cfg = get_configs()
     openings_list = cfg['openings']
-    dates_list = cfg['dates']
-    # openings_dict = dict()
-    openings_dict = {ver: {col: 0 for col in openings_list} for ver in dates_list}
+    queens_list = [i for i in openings_list if i.startswith("Queen's Gambit")]
+    print(queens_list)
 
-    openings_dict = count_QBs(openings_dict, games)
+    # dates_list = cfg['dates']
+    # # openings_dict = dict()
+    # openings_dict = {ver: {col: 0 for col in openings_list} for ver in dates_list}
 
-    df = pd.DataFrame.from_dict(openings_dict,orient='index')
-    df.to_csv(r'C:\Users\Steven\Documents\Projects\chess-analysis-master\games.csv', sep='|')
+    # openings_dict = count_QBs(openings_dict, games)
 
+    # df = pd.DataFrame.from_dict(openings_dict,orient='index')
+    # df.to_csv(r'C:\Users\Steven\Documents\Projects\chess-analysis-master\games.csv', sep='|')
+    df = pd.read_csv(r'C:\Users\Steven\Documents\Projects\chess-analysis-master\games.csv', sep='|')
+    df['Total_Games'] = df[list(df.columns)].sum(axis=1)
+    df['Queens_Gambit'] = df[queens_list].sum(axis=1)
+    df['Percentage_QB_Played'] = df['Queens_Gambit']/df['Total_Games'] * 100
+    print(df['Percentage_QB_Played'])
 
 def count_QBs(openings_dict, pgn):
 	pgn_size = os.path.getsize(pgn)

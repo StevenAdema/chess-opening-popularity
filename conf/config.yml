@@ -61,7 +61,7 @@ openings:
   - "Mieses Opening"
   - "Indian Game"
   - "?"
-  - "Queen's Gambit Declined: Modern Variation, Normal Line"
+  - "Queen's Gambit Refused: Marshall Defense"
   - "Sicilian Defense: Canal Attack, Main Line"
   - "Zukertort Opening: Pirc Invitation"
   - "Philidor Defense"
@@ -1723,4 +1723,5 @@ openings:
   - "Queen's Gambit Accepted: Winawer Defense"
   - "Latvian Gambit: Fraser Defense"
   - "other"
+queen_gambit:
   
