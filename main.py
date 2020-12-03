@@ -11,19 +11,21 @@ def main():
 	"""Maps the popularity of an opening against the Lichess database.
 	Outputs the findings to a matplot line graph.
 	"""
-	games = r'C:\Users\Steven\Documents\Projects\chess-analysis-master\data\game.pgn'
-	# games = r'E:\nov_pgns\lichess_db_standard_rated_2020-11.pgn'
+	# games = r'C:\Users\Steven\Documents\Projects\chess-analysis-master\data\game.pgn'
+	# games = r'E:\pgns\lichess_db_standard_rated_2020-10.pgn'
 	cfg = get_configs()
 	openings_list = cfg['openings']
 	opening = ['d4','e5','c4']
 	simple_name = 'Queens Gambit'
 	dates_list = cfg['dates']
+	openings_dict = dict()
 	openings_dict = {ver: {col: 0 for col in openings_list} for ver in dates_list}
 
-	openings_dict = count_QBs(openings_dict, games, opening)
+	# openings_dict = count_QBs(openings_dict, games, opening)
 
 	df = pd.DataFrame.from_dict(openings_dict, orient='index')
-	# df.to_csv(r'C:\Users\Steven\Documents\Projects\chess-analysis-master\data\games_nov.csv', sep='|') # save for quicker reruns
+	# df.to_csv(r'C:\Users\Steven\Documents\Projects\chess-analysis-master\games_nov.csv', sep='|')
+	df = pd.read_csv(r'C:\Users\Steven\Documents\Projects\chess-analysis-master\data\games_nov.csv', sep='|')
 	df['Date'] = pd.to_datetime(pd.Series(df['Date']), format="%Y.%m.%d")
 	d = PGN_DataFrame(df)
 	d.generate_total_games()
@@ -53,13 +55,13 @@ def count_QBs(openings_dict, pgn, opening):
 				if progress % 1000000 == 0:
 					progressPercent = (100*progress)/pgn_size
 					print(progressPercent)
+				# if progress % 10000000 == 0:
+				# 	break
 
 	return openings_dict
 
 
 def plot_popularity(df, col_name):
-	"""Plot the result
-	"""
 	df = df.set_index('Date')
 	x_list = df.index.values
 	print(x_list)
@@ -70,14 +72,14 @@ def plot_popularity(df, col_name):
 	plt.legend(loc='upper left')
 	plt.margins(0,0)
 	plt.ylim(8.5, 9.5)
-	plt.axhline(y=9.06, color='#39A3E0', ls='--', xmax=0.38, linewidth=2)
-	plt.axhline(y=9.2, color='#0967A0', ls='--', xmin=0.38, linewidth=2)
+	plt.axhline(y=9.06, color='#39A3E0', ls='--', xmax=0.386, linewidth=2)
+	plt.axhline(y=9.2, color='#0967A0', ls='--', xmin=0.386, linewidth=2)
 	plt.gca().yaxis.set_major_formatter(PercentFormatter(100, decimals=1))
 	dtFmt = mdates.DateFormatter('%d-%b')
 	plt.gca().xaxis.set_major_formatter(dtFmt)
 	plt.legend(labels=['pre-release avg.', 'post-release avg.'], loc=2)
 	plt.title('The Queen\'s Gambit Opening Popularity')
-	plt.annotate("Release of Netflix series", ('2020-10-24',8.8))
+	plt.annotate("Release of the Netflix series", ('2020-10-24',8.8))
 	plt.show()
 
 
@@ -91,7 +93,6 @@ def get_configs():
 	with open(conf) as f:
 		res = yaml.safe_load(f)
 	return res
-
 
 
 if __name__ == '__main__':

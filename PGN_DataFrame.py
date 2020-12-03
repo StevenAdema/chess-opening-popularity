@@ -47,5 +47,5 @@ class PGN_DataFrame:
 		new_col_name_pre = col + ' pre release'
 		new_col_name_post = col + ' post release'
 		self.df[new_col_name_pre] = self.df[col]
-		self.df[new_col_name_pre] = np.where(self.df['Date'] > '2020-10-23', 0, self.df[new_col_name_pre])
-		self.df[new_col_name_post] = np.where(self.df['Date'] < '2020-10-24', 0, self.df[col])
+		self.df[new_col_name_pre] = np.where(self.df['Date'] > '2020-10-24', 0, self.df[new_col_name_pre])
+		self.df[new_col_name_post] = np.where(self.df['Date'] < '2020-10-25', 0, self.df[col])
