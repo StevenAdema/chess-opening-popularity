@@ -9,7 +9,7 @@ By comparing all games played on lichess.org over the past two months we can com
 ![Chart of Queen's Gambit Popularity](./conf/queens_gambit.PNG "Title")
 
 ## Installation
-1. Dowlnoad the full record of games for Oct, Nov from https://database.lichess.org/ (~1.5B games!). Unzip the files to ./data
+1. Dowlnoad the full record of games for Oct, Nov from https://database.lichess.org/ (~150 million games). Unzip the files to ./data
 2. Clone the repo.
 3. Run the requirements script to install any required packages.
 4. Run the code from cmd or the IDE of you choice.
