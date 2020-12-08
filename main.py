@@ -20,6 +20,8 @@ def main():
 	dates_list = cfg['dates']
 	openings_dict = dict()
 	openings_dict = {ver: {col: 0 for col in openings_list} for ver in dates_list}
+	print(openings_dict)
+	exit()
 
 	# openings_dict = count_QBs(openings_dict, games, opening)
 
