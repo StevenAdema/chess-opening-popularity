@@ -1,1 +1,6 @@
-games.csv
+.idea
+*.iml
+*.xml
+*/.idea/
+*.npy
+*.db
