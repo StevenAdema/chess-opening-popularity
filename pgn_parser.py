@@ -21,7 +21,7 @@ class PGNs:
     def generate_liches_db(self, games):
         """Method to read a lichess .pgn text file of games to a sqlite database.
         Args:
-            games: plain text format of recorded chess games.
+            games: PGN text file of recorded chess games.
         """
         with open(games) as f:
             with tqdm.tqdm(total=os.path.getsize(games), unit_scale=0.00000001) as pbar:
@@ -62,23 +62,24 @@ def get_moves(self, line):
 
 
 def write_to_db(self, line, a, b, c, d, e):
+    """Once at the final line of metadata for a particular game (the pgn notation), write the row
+    containing the relevant game information to the database.
+    """
     if line[:1] == '1' or line[:2] == ' 0' or line[:2] == ' 1':
         self._cursor.execute('INSERT INTO lichess VALUES(?,?,?,?,?)', (a, b, c, d, e))
 
 
 def add_moves(moves):
+    """If available, get the first three moves from the PGN chess notation of the game"""
     opening_moves = []
-    # get first move
     try:
         opening_moves.append(moves[1])
     except IndexError:
         pass
-    # get second move
     try:
         opening_moves.append(moves[6])
     except IndexError:
-        pass    
-    # get third move
+        pass
     try:
         opening_moves.append(moves[12])
     except IndexError:
