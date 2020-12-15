@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Chess Openings</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h1 style="text-align: center">Chess Openings Popularity</h1>
+    {% if tasks|length < 1 %}
+    <h4 style="text-align: center">Select an ELO range and opening to map it's popularity!</h4>
+    {% else %}
+    <table>
+        <tr>
+            <th>Task</th>
+            <th>Added</th>
+            <th>Actions</th>
+        </tr>
+        {% for task in tasks %}
+            <tr>
+                <td>{{ task.content }}</td>
+                <td>{{ task.date_created.date() }}</td>
+                <td>
+                    <a href="/delete/{{task.id}}">Delete</a>
+                    <br>
+                    <a href="/update/{{task.id}}">Update</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    <div class="form">
+        <form action="/" method="POST">
+            <label for="elo">ELO range:</label><br>
+                <input type="text" name="content" id="content"><br>
+            <label for="opening">Opening Line:</label><br>
+                <input type="text" name="content2" id="content2"><br><br>
+                <input type="submit" value="Map Popularity">
+        </form>
+    </div>
+    </div>
+    <div>
+    <img src={{ name }} alt="Chart" height="42" width="42">
+    </div>
+</div>
+{% endblock %}
