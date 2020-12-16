@@ -1,73 +1,121 @@
 from flask import Flask, render_template, url_for, request, redirect
-from flask_sqlalchemy import SQLAlchemy
+import dash_core_components as dcc
+import dash_html_components as html
 from datetime import datetime
 from games import Games
 import pandas as pd
 import numpy as np
 import base64
+import json
 import io
+import plotly
+import plotly.graph_objects as go
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
 import matplotlib.pyplot as plt
 from matplotlib.ticker import PercentFormatter
 plt.style.use('fivethirtyeight')
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-db = SQLAlchemy(app)
-
-class Todo(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(200), nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
-
-    def __repr__(self):
-        return '<Task %r>' % self.id
-
+# app.debug = True
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
-    if request.method == 'POST':
+    if request.method == 'POST':  
+        print('if')
         elo_range = request.form['content']
-        opening = request.form['content2']
-        
+        opening = request.form['content2']   
+        print(elo_range, opening)  
         g = Games('/data/lichess.db', elo=elo_range, opening=opening)
-        plot_popularity(g.df, elo=elo_range)
+    
+        x = g.df['date'].tolist()
+        x = [datetime.strptime(d, '%Y.%m.%d') for d in x]
+        x = [datetime.strftime(d, '%b-%d') for d in x]
 
-        try:
-            return redirect('/')
-        except:
-            return 'There was an issue adding your task'
+        graph = dict(
+            data=[go.Bar(
+                x=x,
+                y=g.df['opening_percentage_played']
+            )],
+            layout=dict(
+                title='Bar Plot',
+                yaxis=dict(
+                    title="opening_percentage_played"
+                ),
+                xaxis=dict(
+                    title="date"
+                )
+            )
+        )
 
+        # Convert the figures to JSON
+        graphJSON = json.dumps(graph, cls=plotly.utils.PlotlyJSONEncoder) 
+        return render_template('chart.html', graphJSON=graphJSON)
     else:
-        tasks = Todo.query.order_by(Todo.date_created).all()
-        return render_template('index.html', tasks=tasks)
+        print('else')
+        elo_range = '800-1000'
+        opening = "['e4','e5','Ke2']" 
+        g = Games('/data/lichess.db', elo=elo_range, opening=opening)
+        # plot_popularity(g.df, elo=elo_range)
+        x = g.df['date'].tolist()
+        x = [datetime.strptime(d, '%Y.%m.%d') for d in x]
+        x = [datetime.strftime(d, '%b-%d') for d in x]
 
+        graph = dict(
+            data=[go.Bar(
+                x=x,
+                y=g.df['opening_percentage_played']
+            )],
+            layout=dict(
+                title='Bar Plot',
+                yaxis=dict(
+                    title="opening_percentage_played"
+                ),
+                xaxis=dict(
+                    title="date"
+                )
+            )
+        )
 
-@app.route('/delete/<int:id>')
-def delete(id):
-    task_to_delete = Todo.query.get_or_404(id)
+        # Convert the figures to JSON
+        graphJSON = json.dumps(graph, cls=plotly.utils.PlotlyJSONEncoder) 
+        return render_template('index.html', graphJSON=graphJSON)
 
-    try:
-        db.session.delete(task_to_delete)
-        db.session.commit()
-        return redirect('/')
-    except:
-        return 'There was a problem deleting that task'
+# @app.route('/', methods=['POST', 'GET'])
+# def index():
+#     if request.method == 'POST':
+#         elo_range = request.form['content']
+#         opening = request.form['content2']
+        
+#         g = Games('/data/lichess.db', elo=elo_range, opening=opening)
+#         # plot_popularity(g.df, elo=elo_range)
+#         x = g.df['date'].tolist()
+#         x = [datetime.strptime(d, '%Y.%m.%d') for d in x]
+#         x = [datetime.strftime(d, '%b-%d') for d in x]
 
-@app.route('/update/<int:id>', methods=['GET', 'POST'])
-def update(id):
-    task = Todo.query.get_or_404(id)
+#         graph = dict(
+#             data=[go.Bar(
+#                 x=x,
+#                 y=g.df['opening_percentage_played']
+#             )],
+#             layout=dict(
+#                 title='Bar Plot',
+#                 yaxis=dict(
+#                     title="opening_percentage_played"
+#                 ),
+#                 xaxis=dict(
+#                     title="date"
+#                 )
+#             )
+#         )
 
-    if request.method == 'POST':
-        task.content = request.form['content']
+#         # Convert the figures to JSON
+#         graphJSON = json.dumps(graph, cls=plotly.utils.PlotlyJSONEncoder) 
+#         return render_template('index.html', graphJSON=graphJSON)
+#     else:
+#         return render_template('index.html')
 
-        try:
-            db.session.commit()
-            return redirect('/')
-        except:
-            return 'There was an issue updating your task'
-
-    else:
-        return render_template('update.html', task=task)
 
 def plot_popularity(df, opening_name='unknown', elo=None):
     """ Creates a line plot of the relative popularity of an opening over a defined
@@ -95,7 +143,8 @@ def plot_popularity(df, opening_name='unknown', elo=None):
         plt.legend(labels=['% of games beginning with ' + opening_name], loc=2)
     plt.title('Popularity of ' + opening_name + ' on lichess.org')
     # plt.annotate("♕ Release of 'The Queen\'s Gambit'", (22.6, 1.73))
-    return render_template('/', name = plt.show())
+    fig.savefig('/data/img.png')
+    plt.close(fig)
 
 if __name__ == "__main__":
     app.run(debug=True)
