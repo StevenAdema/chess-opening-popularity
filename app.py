@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 import base64
 import json
-import io
+from io import StringIO
 import plotly
 import plotly.graph_objects as go
 import dash
@@ -32,26 +32,16 @@ def index():
         x = g.df['date'].tolist()
         x = [datetime.strptime(d, '%Y.%m.%d') for d in x]
         x = [datetime.strftime(d, '%b-%d') for d in x]
+        y = g.df['opening_percentage_played'].tolist()
+        plt.plot(x,y)
+        plt.savefig(img, format='png')
+        plt.close()
+        img.seek(0)
 
-        graph = dict(
-            data=[go.Bar(
-                x=x,
-                y=g.df['opening_percentage_played']
-            )],
-            layout=dict(
-                title='Bar Plot',
-                yaxis=dict(
-                    title="opening_percentage_played"
-                ),
-                xaxis=dict(
-                    title="date"
-                )
-            )
-        )
+        plot_url = base64.b64encode(img.getvalue())
 
-        # Convert the figures to JSON
-        graphJSON = json.dumps(graph, cls=plotly.utils.PlotlyJSONEncoder) 
-        return render_template('chart.html', graphJSON=graphJSON)
+        return render_template('/', plot_url=plot_url)
+        # return render_template('chart.html', graphJSON=graphJSON)
     else:
         print('else')
         elo_range = '800-1000'
