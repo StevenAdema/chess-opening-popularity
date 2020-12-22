@@ -5,14 +5,9 @@ from datetime import datetime
 from games import Games
 import pandas as pd
 import numpy as np
-import base64
 import json
-from io import StringIO
-import plotly
-import plotly.graph_objects as go
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from bokeh.plotting import figure
+from bokeh.embed import components
 import matplotlib.pyplot as plt
 from matplotlib.ticker import PercentFormatter
 plt.style.use('fivethirtyeight')
@@ -25,52 +20,27 @@ def index():
     if request.method == 'POST':  
         print('if')
         elo_range = request.form['content']
-        opening = request.form['content2']   
-        print(elo_range, opening)  
+        opening = request.form['content2']
         g = Games('/data/lichess.db', elo=elo_range, opening=opening)
-    
-        x = g.df['date'].tolist()
-        x = [datetime.strptime(d, '%Y.%m.%d') for d in x]
-        x = [datetime.strftime(d, '%b-%d') for d in x]
-        y = g.df['opening_percentage_played'].tolist()
-        plt.plot(x,y)
-        plt.savefig(img, format='png')
-        plt.close()
-        img.seek(0)
-
-        plot_url = base64.b64encode(img.getvalue())
-
-        return render_template('/', plot_url=plot_url)
-        # return render_template('chart.html', graphJSON=graphJSON)
+        x = g.df.date.tolist()
+        y = g.df.opening_percentage_played.tolist()
+        plot = figure(plot_width=400, plot_height=400, title=None, toolbar_location="below")
+        plot.line(x, y)
+        script, div = components(plot)
+        kwargs = {'script': script, 'div': div}
+        kwargs['title'] = 'bokeh-with-flask'
+        return render_template('index.html', data = )
     else:
         print('else')
         elo_range = '800-1000'
         opening = "['e4','e5','Ke2']" 
         g = Games('/data/lichess.db', elo=elo_range, opening=opening)
-        # plot_popularity(g.df, elo=elo_range)
-        x = g.df['date'].tolist()
-        x = [datetime.strptime(d, '%Y.%m.%d') for d in x]
-        x = [datetime.strftime(d, '%b-%d') for d in x]
-
-        graph = dict(
-            data=[go.Bar(
-                x=x,
-                y=g.df['opening_percentage_played']
-            )],
-            layout=dict(
-                title='Bar Plot',
-                yaxis=dict(
-                    title="opening_percentage_played"
-                ),
-                xaxis=dict(
-                    title="date"
-                )
-            )
-        )
-
-        # Convert the figures to JSON
-        graphJSON = json.dumps(graph, cls=plotly.utils.PlotlyJSONEncoder) 
-        return render_template('index.html', graphJSON=graphJSON)
+        chart_data = g.df.to_dict(orient='records')
+        print(chart_data)
+        chart_data = json.dumps(chart_data, indent=2)
+        print(chart_data)
+        data = {'chart_data': chart_data}
+        return render_template('index.html', data=data)
 
 # @app.route('/', methods=['POST', 'GET'])
 # def index():
