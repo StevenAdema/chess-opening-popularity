@@ -8,7 +8,8 @@ from bokeh.embed import components
 import matplotlib.pyplot as plt
 from matplotlib.ticker import PercentFormatter
 from bokeh.resources import CDN
-plt.style.use('fivethirtyeight')
+from bokeh.models import DatetimeTickFormatter
+
 
 app = Flask(__name__)
 app.debug = True
@@ -18,13 +19,22 @@ def index():
     if request.method == 'POST':  
         print('if')
         elo_range = request.form['service']
-        opening = request.form['name']
+        opening_original = request.form['name']
+        opening = "['" + opening_original.replace(",", "', '") + "']"
+        print(opening)
+        print("['d4', 'd5', 'c4']")
         g = Games('/data/lichess.db', elo=elo_range, opening=opening)
         x = g.df.date.tolist()
         x = [datetime.strptime(d, '%Y.%m.%d') for d in x]
         y = g.df.opening_percentage_played.tolist()
-        p = figure()
-        p.line(x, y, color="blue")
+        chart_title = "Popularity of " + opening_original + " by " + elo_range + " ELOs"
+        p = figure(title=chart_title, x_axis_type="datetime")
+        p.xaxis.formatter = DatetimeTickFormatter(days="%d-%b")
+        p.line(x, y, color="darkorange", line_width=3)
+        p.yaxis.axis_label = "% of games beginning with " + opening_original
+        p.yaxis.axis_label_text_color = "#662900"
+        p.xaxis.axis_label = "Date"
+        p.xaxis.axis_label_text_color = "#662900"
         script1, div1 = components(p)
         cdn_js = CDN.js_files
         cdn_css = CDN.css_files
@@ -32,52 +42,24 @@ def index():
         return render_template('index.html', script1=script1, div1=div1, cdn_css=cdn_css, cnd_js=cdn_js)
     else:
         print('else')
-        g = Games('/data/lichess.db', elo='800-1000', opening="['d4', 'd5', 'c4']")
+        g = Games('/data/lichess.db', elo='ALL', opening="['d4', 'd5', 'c4']")
         x = g.df.date.tolist()
         x = [datetime.strptime(d, '%Y.%m.%d') for d in x]
         y = g.df.opening_percentage_played.tolist()
-        p = figure()
-        p.line(x, y, color="blue")
+        chart_title = "Popularity of 1. d4 d5 2. c4 by All ELOs"
+        p = figure(title=chart_title, x_axis_type="datetime")
+        p.xaxis.formatter = DatetimeTickFormatter(days="%d-%b")
+        p.line(x, y, color="darkorange", line_width=3)
+        p.yaxis.axis_label = "% of games beginning with 1. d4 d5 2. c4 "
+        p.yaxis.axis_label_text_color = "#662900"
+        p.xaxis.axis_label = "Date"
+        p.xaxis.axis_label_text_color = "#662900"
+
         script1, div1 = components(p)
         cdn_js = CDN.js_files
         cdn_css = CDN.css_files
 
         return render_template('index.html', script1=script1, div1=div1, cdn_css=cdn_css, cnd_js=cdn_js)
-
-
-# @app.route('/', methods=['POST', 'GET'])
-# def index():
-#     if request.method == 'POST':
-#         elo_range = request.form['content']
-#         opening = request.form['content2']
-        
-#         g = Games('/data/lichess.db', elo=elo_range, opening=opening)
-#         # plot_popularity(g.df, elo=elo_range)
-#         x = g.df['date'].tolist()
-#         x = [datetime.strptime(d, '%Y.%m.%d') for d in x]
-#         x = [datetime.strftime(d, '%b-%d') for d in x]
-
-#         graph = dict(
-#             data=[go.Bar(
-#                 x=x,
-#                 y=g.df['opening_percentage_played']
-#             )],
-#             layout=dict(
-#                 title='Bar Plot',
-#                 yaxis=dict(
-#                     title="opening_percentage_played"
-#                 ),
-#                 xaxis=dict(
-#                     title="date"
-#                 )
-#             )
-#         )
-
-#         # Convert the figures to JSON
-#         graphJSON = json.dumps(graph, cls=plotly.utils.PlotlyJSONEncoder) 
-#         return render_template('index.html', graphJSON=graphJSON)
-#     else:
-#         return render_template('index.html')
 
 
 def plot_popularity(df, opening_name='unknown', elo=None):
@@ -108,6 +90,7 @@ def plot_popularity(df, opening_name='unknown', elo=None):
     # plt.annotate("♕ Release of 'The Queen\'s Gambit'", (22.6, 1.73))
     fig.savefig('/data/img.png')
     plt.close(fig)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
