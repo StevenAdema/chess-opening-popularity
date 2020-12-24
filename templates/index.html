@@ -5,18 +5,95 @@
 {% endblock %}
 
 {% block body %}
-<div class="content">
-    <h1 style="text-align: center">Chess Openings Popularity</h1>
-    <h4 style="text-align: center">Select an ELO range and opening to map it's popularity!</h4>
-    <div class="form">
-        <form action="/" method="POST">
-            <label for="elo">ELO range:</label><br>
-                <input type="text" name="content" id="content"><br>
-            <label for="opening">Opening Line:</label><br>
-                <input type="text" name="content2" id="content2"><br><br>
-                <input type="submit" value="Map Popularity">
-        </form>
-    </div>
-</div>
+<body>
 
+	<div class="container-contact100">
+		<div class="wrap-contact100">
+			<form class="contact100-form validate-form" id="form" action="/" method="POST">
+				<span class="contact100-form-title">
+					Chess Openings Explorer
+				</span>
+				<div class="wrap-input100 input100-select">
+					<span class="label-input100">ELO Range</span>
+					<div>
+                        <select id="content" class="selection-2" name="service">
+                              <option value="<800">under 800</option>
+                              <option value="800-1000" selected="selected">800 - 1000</option>
+                              <option value="1000-1200">1000 - 1200</option>
+                              <option value="1200-1400">1200 - 1400</option>
+                              <option value=">1400">over 1400</option>
+                        </select>
+					</div>
+					<span class="focus-input100"></span>
+				</div>
+
+                <div class="wrap-input100 validate-input" data-validate="Name is required">
+					<span class="label-input100">Opening Name</span>
+					<input class="input100" type="text" name="name" placeholder="Queen's Gambit">
+					<span class="focus-input100"></span>
+				</div>
+
+
+
+				<div class="container-contact100-form-btn">
+					<div class="wrap-contact100-form-btn">
+						<div class="contact100-form-bgbtn"></div>
+						 <input type="submit" value="Map Popularity" class="fa fa-long-arrow-right m-l-7" aria-hidden="true">
+					</div>
+				</div>
+			</form>
+		</div>
+    <div class="div2">
+        <div class="graph">
+            {{ script1 | safe }}
+            {{ div1 | safe }}
+        </div>
+    </div>
+	</div>
+
+
+
+
+	<div id="dropDownSelect1"></div>
+
+<!--===============================================================================================-->
+	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/animsition/js/animsition.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/bootstrap/js/popper.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/select2/select2.min.js"></script>
+	<script>
+		$(".selection-2").select2({
+			minimumResultsForSearch: 20,
+			dropdownParent: $('#dropDownSelect1')
+		});
+	</script>
+<!--===============================================================================================-->
+	<script src="vendor/daterangepicker/moment.min.js"></script>
+	<script src="vendor/daterangepicker/daterangepicker.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/countdowntime/countdowntime.js"></script>
+<!--===============================================================================================-->
+	<script src="js/main.js"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-2.2.3.min.js"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.2.3.min.js"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.2.3.min.js"
+        crossorigin="anonymous"></script>
+
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-23581568-13');
+</script>
+
+</body>
 {% endblock %}

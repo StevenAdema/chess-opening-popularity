@@ -1,46 +1,49 @@
 from flask import Flask, render_template, url_for, request, redirect
-import dash_core_components as dcc
-import dash_html_components as html
 from datetime import datetime
 from games import Games
 import pandas as pd
 import numpy as np
-import json
 from bokeh.plotting import figure
 from bokeh.embed import components
 import matplotlib.pyplot as plt
 from matplotlib.ticker import PercentFormatter
+from bokeh.resources import CDN
 plt.style.use('fivethirtyeight')
 
 app = Flask(__name__)
-# app.debug = True
+app.debug = True
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
     if request.method == 'POST':  
         print('if')
-        elo_range = request.form['content']
-        opening = request.form['content2']
+        elo_range = request.form['service']
+        opening = request.form['name']
         g = Games('/data/lichess.db', elo=elo_range, opening=opening)
         x = g.df.date.tolist()
+        x = [datetime.strptime(d, '%Y.%m.%d') for d in x]
         y = g.df.opening_percentage_played.tolist()
-        plot = figure(plot_width=400, plot_height=400, title=None, toolbar_location="below")
-        plot.line(x, y)
-        script, div = components(plot)
-        kwargs = {'script': script, 'div': div}
-        kwargs['title'] = 'bokeh-with-flask'
-        return render_template('index.html', data = )
+        p = figure()
+        p.line(x, y, color="blue")
+        script1, div1 = components(p)
+        cdn_js = CDN.js_files
+        cdn_css = CDN.css_files
+
+        return render_template('index.html', script1=script1, div1=div1, cdn_css=cdn_css, cnd_js=cdn_js)
     else:
         print('else')
-        elo_range = '800-1000'
-        opening = "['e4','e5','Ke2']" 
-        g = Games('/data/lichess.db', elo=elo_range, opening=opening)
-        chart_data = g.df.to_dict(orient='records')
-        print(chart_data)
-        chart_data = json.dumps(chart_data, indent=2)
-        print(chart_data)
-        data = {'chart_data': chart_data}
-        return render_template('index.html', data=data)
+        g = Games('/data/lichess.db', elo='800-1000', opening="['d4', 'd5', 'c4']")
+        x = g.df.date.tolist()
+        x = [datetime.strptime(d, '%Y.%m.%d') for d in x]
+        y = g.df.opening_percentage_played.tolist()
+        p = figure()
+        p.line(x, y, color="blue")
+        script1, div1 = components(p)
+        cdn_js = CDN.js_files
+        cdn_css = CDN.css_files
+
+        return render_template('index.html', script1=script1, div1=div1, cdn_css=cdn_css, cnd_js=cdn_js)
+
 
 # @app.route('/', methods=['POST', 'GET'])
 # def index():
