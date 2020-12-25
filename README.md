@@ -7,7 +7,7 @@ Online chess traffic has increased nearly 40% month-over-month since the release
 By analyzing all games played on lichess.org over the past two months(~150 million), we can compare the popularity of an opening. A PGN (Portable Game Notation) is a plain text record of of both game metadata (date, player ELOs, winner, time control, etc) as well as the moves made in the game.  Running the app against lichess.org's Oct and Nov databases against the opening 1. d4 d5 2. c4, we see the following:
 
 
-![Queen's Gambit Popularity](/conf/d5d5c4.PNG?raw=true)
+![Queen's Gambit Popularity](/conf/queens_gambit.PNG?raw=true)
 
 Approx. a 7% relative increase from the pre-release October average to it's peak in mid November. The King's Knight, a very beginner friendly opening, also saw a similar bump in popularity.
 
