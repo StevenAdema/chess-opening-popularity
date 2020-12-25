@@ -14,22 +14,21 @@ By analyzing all games played on lichess.org over the past two months(~150 milli
 
 ![Queen's Gambit Popularity](/conf/queens_gambit.PNG?raw=true)
 
-Wow! A 40% relative increase from the pre-release October average to it's peak in mid November among players in the 800-1000 ELO range.
+*Wow!* A 40% relative increase from the pre-release October average to it's peak in mid November among players in the 800-1000 ELO range.
 
 <br/>
 
 ![King's Pawn Popularity](/conf/e4e5Nf3.PNG?raw=true)
 
-Similarly, the impact of a large new player base has lead to an increase in the popularity of the King's Pawn Opening.  This opening leads to the Italian Game and Guico Piano, two very common lines for beginners to study.
+The large new player base has lead to an increase in the popularity of the King's Pawn Opening, one of the most common lines first learned by beginners 
 
 
 
 ## Installation
 1. Clone the repo.
 2. Download the full record of games for Oct, Nov from https://database.lichess.org/. Unzip the files to ./data
-3. Run the requirements script to install the required packages.
-4. '''pip install -r requirements.txt'''
-5. '''env\scripts\activate'''
-6. '''python app.py'''
-7. Open http://127.0.0.1:5000/
+3. ``` pip install -r requirements.txt ```
+4. ```env\scripts\activate```
+5. ```python app.py```
+6. Open http://127.0.0.1:5000/
 
