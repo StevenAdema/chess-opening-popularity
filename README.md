@@ -25,3 +25,7 @@ The French Defense, an opening less likely to be studied by beginners in their f
 3. Run the requirements script to install the required packages.
 4. Update the *opening* variable in **main.py** with a line of your choice (currently only first three moves are supported)
 5. Run **main.py
+
+## Sample
+
+![Queen's Gambit Popularity](/conf/showcase.gif?raw=true)
