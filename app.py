@@ -21,8 +21,6 @@ def index():
         elo_range = request.form['service']
         opening_original = request.form['name']
         opening = "['" + opening_original.replace(",", "', '") + "']"
-        print(opening)
-        print("['d4', 'd5', 'c4']")
         g = Games('/data/lichess.db', elo=elo_range, opening=opening)
         x = g.df.date.tolist()
         x = [datetime.strptime(d, '%Y.%m.%d') for d in x]
